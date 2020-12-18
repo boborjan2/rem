@@ -75,6 +75,7 @@ endif
 endif
 endif
 
+ifeq ($(MODULES),)
 # List of modules
 MODULES += fir goertzel
 MODULES += g711
@@ -88,8 +89,11 @@ endif
 MODULES += vid vidconv
 MODULES += aac
 MODULES += avc
+endif
 
-LIBS    += -lm
+ifneq ($(HAVE_LIBM),)
+LIBS      += -lm
+endif
 
 INSTALL := install
 ifeq ($(DESTDIR),)
@@ -112,12 +116,12 @@ ifneq ($(HAVE_NEON),)
 CFLAGS		+= -DHAVE_NEON=1
 endif
 
-
+OUTDIR  ?= .
 MODMKS	:= $(patsubst %,src/%/mod.mk,$(MODULES))
-SHARED  := librem$(LIB_SUFFIX)
+SHARED  := $(OUTDIR)/librem$(LIB_SUFFIX)
 SHARED_SONAME  := $(SHARED).$(ABI_MAJOR)
 SHARED_FILE    := $(SHARED).$(ABI_MAJOR).$(ABI_AGE).$(ABI_REV)
-STATIC	:= librem.a
+STATIC	:= $(OUTDIR)/librem.a
 
 ifeq ($(OS),linux)
 SH_LFLAGS      += -Wl,-soname,$(SHARED_SONAME)
@@ -130,7 +134,7 @@ OBJS	?= $(patsubst %.c,$(BUILD)/%.o,$(filter %.c,$(SRCS)))
 OBJS	+= $(patsubst %.S,$(BUILD)/%.o,$(filter %.S,$(SRCS)))
 
 
-all: $(SHARED) $(STATIC)
+all: $(STATIC)
 
 
 -include $(OBJS:.o=.d)
