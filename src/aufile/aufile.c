@@ -21,6 +21,12 @@ struct aufile {
 };
 
 
+size_t aufile_get_size(struct aufile *af)
+{
+	return af->datasize;
+}
+
+
 static int wavfmt_to_aufmt(enum wavfmt fmt, uint16_t bps)
 {
 	switch (fmt) {
