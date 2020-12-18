@@ -26,6 +26,7 @@ endif
 
 include $(LIBRE_MK)
 
+ifeq ($(MODULES),)
 # List of modules
 MODULES += fir goertzel
 MODULES += g711
@@ -40,8 +41,11 @@ MODULES += vid vidconv
 MODULES += aac
 MODULES += avc
 MODULES += h264
+endif
 
-LIBS    += -lm
+ifneq ($(HAVE_LIBM),)
+LIBS      += -lm
+endif
 
 INSTALL := install
 ifeq ($(DESTDIR),)
@@ -64,10 +68,10 @@ ifneq ($(HAVE_NEON),)
 CFLAGS		+= -DHAVE_NEON=1
 endif
 
-
+OUTDIR  ?= .
 MODMKS	:= $(patsubst %,src/%/mod.mk,$(MODULES))
-SHARED  := librem$(LIB_SUFFIX)
-STATIC	:= librem.a
+SHARED  := $(OUTDIR)/librem$(LIB_SUFFIX)
+STATIC	:= $(OUTDIR)/librem.a
 
 
 include $(MODMKS)
