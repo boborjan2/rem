@@ -288,14 +288,19 @@ int aubuf_write_auframe(struct aubuf *ab, const struct auframe *af)
 	else
 		sz = af->sampc;
 
-	mb = mbuf_alloc(sz);
+	if(af->mb) {
+		/* user provided an mbuf already, use that one */
+		mb = af->mb;
+	}
+	else {
+		mb = mbuf_alloc(sz);
 
-	if (!mb)
-		return ENOMEM;
+		if (!mb)
+			return ENOMEM;
 
-	(void)mbuf_write_mem(mb, af->sampv, sz);
-	mb->pos = 0;
-
+		(void)mbuf_write_mem(mb, af->sampv, sz);
+		mb->pos = 0;
+	}
 	err = aubuf_append_auframe(ab, mb, af);
 
 	mtx_lock(ab->lock);

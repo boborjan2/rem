@@ -12,6 +12,7 @@ struct auframe {
 	uint32_t srate;      /**< Samplerate                        */
 	void *sampv;         /**< Audio samples (must be mem_ref'd) */
 	size_t sampc;        /**< Total number of audio samples     */
+	struct mbuf *mb; 	 /**< au player/receiver may use this to skip one memcpy */
 	uint64_t timestamp;  /**< Timestamp in AUDIO_TIMEBASE units */
 	double level;        /**< Audio level in dBov               */
 	uint8_t ch;          /**< Channels                          */
